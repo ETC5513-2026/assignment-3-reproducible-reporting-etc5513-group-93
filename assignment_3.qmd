@@ -18,16 +18,47 @@ hello everyone! lets start with assignment! I have downloaded data as csv and st
 #| label: setup
 #| include: false
 
-install.packages('tidyverse')
-install.packages("kableExtra")
 library(tidyverse)
 library(knitr)
 library(kableExtra)
-renv::snapshot()
-
-renv::status()
 
 athletes <- read_csv("data/athlete_events.csv")
+```
+
+## Methodology
+
+This data analysis makes use of the "120 Years of Olympic History" dataset found on Kaggle and has a total of 271,116 observations in 15 different variables that cover the period from the Athens Games in 1896 to the Rio Games in 2016 [@olympics_kaggle]. Data is related to individual athletes such as their names, sex, age, country, sport, event, and the medals won. Only the Summer Olympic Games were considered in order to ensure consistency in the types of events being compared since there are differences between the Summer and Winter Olympic Games in terms of sports, countries that participate, and numbers of athletes. The Age, Height and Weight variables had missing values which were not necessary for the analysis. Medal values of NA indicate non-medallists and were excluded from medal counts. @fig-gender shows participation trends by gender over time and @tbl-medals summarises medal counts by sport for the top 5 countries.
+
+```{r}
+#| label: fig-gender
+#| fig-cap: "Male and Female Athlete Participation in the Summer Olympics (1896–2016)"
+#| echo: false
+#| warning: false
+
+athletes |>
+  filter(Season == "Summer") |>
+  distinct(Year, Name, Sex) |>
+  count(Year, Sex) |>
+  ggplot(aes(x = Year, y = n, colour = Sex)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(x = "Year", y = "Number of Athletes", colour = "Sex") +
+  theme_minimal()
+
+```
+
+```{r}
+#| label: tbl-medals
+#| tbl-cap: "Top 5 Countries by Total Medals (Summer Olympics)"
+#| echo: false
+#| warning: false
+
+athletes |>
+  filter(Season == "Summer", !is.na(Medal)) |>
+  count(Team, name = "Total Medals") |>
+  slice_max(`Total Medals`, n = 5) |>
+  rename(Country = Team) |>
+  kable(booktabs = TRUE)
 ```
 
 ## student C will work here -
