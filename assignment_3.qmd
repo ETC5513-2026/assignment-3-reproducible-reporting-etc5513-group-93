@@ -31,7 +31,7 @@ This data analysis makes use of the "120 Years of Olympic History" dataset found
 
 ```{r}
 #| label: fig-gender
-#| fig-cap: "Male and Female Athlete Participation in the Summer Olympics (1896–2016)"
+#| fig-cap: "Athlete Participation by Gender in the Summer Olympics (1896–2016)"
 #| echo: false
 #| warning: false
 
@@ -56,9 +56,32 @@ athletes |>
 athletes |>
   filter(Season == "Summer", !is.na(Medal)) |>
   count(Team, name = "Total Medals") |>
-  slice_max(`Total Medals`, n = 5) |>
+  arrange(desc(`Total Medals`)) |>
+  head(5) |>
   rename(Country = Team) |>
   kable(booktabs = TRUE)
+```
+
+## Results
+
+@fig-topcountries shows the ten countries with the highest total number of medals won through all Summer Olympic Games. Leading is the United States, then comes the Soviet Union and Germany. Australia can be found among the ten most successful countries. There is a noticeable domination of rich countries throughout history, which proves the correlation between national resources and Olympic success.
+
+```{r}
+#| label: fig-topcountries
+#| fig-cap: "Top 10 Countries by Total Medal Count in the Summer Olympics (1896–2016)"
+#| echo: false
+#| warning: false
+
+athletes |>
+  filter(Season == "Summer", !is.na(Medal)) |>
+  count(Team, name = "total_medals") |>
+  arrange(desc(total_medals)) |>
+  head(10) |>
+  mutate(Team = fct_reorder(Team, total_medals)) |>
+  ggplot(aes(x = total_medals, y = Team)) +
+  geom_col(fill = "steelblue") +
+  labs(x = "Total Medals", y = "Country") +
+  theme_minimal()
 ```
 
 ## student C will work here -

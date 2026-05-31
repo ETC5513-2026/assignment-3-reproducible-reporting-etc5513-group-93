@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="methodology" class="level2">
 <h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
-<p>This analysis uses the 120 Years of Olympic History dataset sourced from Kaggle, containing 271,116 observations across 15 variables spanning the 1896 Athens Games to the 2016 Rio Games <span class="citation" data-cites="olympics_kaggle">[@olympics_kaggle]</span>. The dataset includes athlete-level information such as name, sex, age, team, sport, event, and medal outcome. This analysis focuses on the Summer Olympics only to ensure consistency across comparable events, as Summer and Winter Games differ significantly in sports, participating nations, and athlete counts. Missing values were present in Age, Height and Weight columns but were not required for this analysis. Medal values of NA indicate non-medallists and were excluded from medal counts. <a href="#fig-gender" class="quarto-xref">Figure&nbsp;1</a> shows participation trends by gender over time and <a href="#tbl-medals" class="quarto-xref">Table&nbsp;1</a> summarises medal counts by sport for the top 5 countries.</p>
+<p>This data analysis makes use of the “120 Years of Olympic History” dataset found on Kaggle and has a total of 271,116 observations in 15 different variables that cover the period from the Athens Games in 1896 to the Rio Games in 2016 <span class="citation" data-cites="olympics_kaggle">[@olympics_kaggle]</span>. Data is related to individual athletes such as their names, sex, age, country, sport, event, and the medals won. Only the Summer Olympic Games were considered in order to ensure consistency in the types of events being compared since there are differences between the Summer and Winter Olympic Games in terms of sports, countries that participate, and numbers of athletes. The Age, Height and Weight variables had missing values which were not necessary for the analysis. Medal values of NA indicate non-medallists and were excluded from medal counts. <a href="#fig-gender" class="quarto-xref">Figure&nbsp;1</a> shows participation trends by gender over time and <a href="#tbl-medals" class="quarto-xref">Table&nbsp;1</a> summarises medal counts by sport for the top 5 countries.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-gender" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -84,7 +84,7 @@ ul.task-list li input[type="checkbox"] {
 <img src="assignment_3_files/figure-html/fig-gender-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gender-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Male and Female Athlete Participation in the Summer Olympics (1896–2016)
+Figure&nbsp;1: Athlete Participation by Gender in the Summer Olympics (1896–2016)
 </figcaption>
 </figure>
 </div>
@@ -131,6 +131,24 @@ Table&nbsp;1: Top 5 Countries by Total Medals (Summer Olympics)
 </div>
 </div>
 </figure>
+</div>
+</div>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p><a href="#fig-topcountries" class="quarto-xref">Figure&nbsp;2</a> shows the ten countries with the highest total number of medals won through all Summer Olympic Games. Leading is the United States, then comes the Soviet Union and Germany. Australia can be found among the ten most successful countries. There is a noticeable domination of rich countries throughout history, which proves the correlation between national resources and Olympic success.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-topcountries" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-topcountries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assignment_3_files/figure-html/fig-topcountries-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-topcountries-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Top 10 Countries by Total Medal Count in the Summer Olympics (1896–2016)
+</figcaption>
+</figure>
+</div>
 </div>
 </div>
 </section>
