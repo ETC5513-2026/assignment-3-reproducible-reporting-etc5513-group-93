@@ -5,17 +5,29 @@ editor: visual
 ---
 
 hello everyone! lets start with assignment! I have downloaded data as csv and stored in data folder :)
+
 ```{r}
 
 ```
 
 ## student A will work here -
 
-
-
-
 ## student B will work here -
 
+```{r}
+#| label: setup
+#| include: false
 
+install.packages('tidyverse')
+install.packages("kableExtra")
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+renv::snapshot()
+
+renv::status()
+
+athletes <- read_csv("data/athlete_events.csv")
+```
 
 ## student C will work here -
