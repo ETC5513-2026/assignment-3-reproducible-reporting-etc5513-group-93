@@ -1,21 +1,27 @@
 ---
-title: "assignment_3"
-format: html
-editor: visual
+title: "120 Years of Olympic History: Participation and Medal Trends"
+author:
+  - Vibhor Dabas
+  - Shravani Jadhav
+  - Minh Chung
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+bibliography: references.bib
 ---
 
-hello everyone! lets start with assignment! I have downloaded data as csv and stored in data folder :)
-```{r}
+## Introduction -
 
-```
+The Olympic Games is the most popular international sports competition that gathers the best sportsmen from all the world every four years. Since their modern revival in Athens in 1896, the Games have expanded enormously in scale, diversity and global importance. Studying historical trends in Olympic participation and performance can shed light on wider trends in gender equality, national development and sporting investment. This report looks at athlete-level data over 120 years of Olympic history to bring out key trends in participation and medal outcomes.
 
-## student A will work here -
+The dataset, from Kaggle [@olympics_kaggle], contains over 271,000 observations of athletes, sports, events, and medal results from Summer and Winter Games. The analysis is restricted to the Summer Olympics to ensure comparability of similar events. The analysis is guided by three key questions: How has gender participation changed over time? Which countries have historically dominated the medal tallies? How has Australia performed relative to other countries? The findings aim to provide a data-based view on the evolution of the Olympic movement.
 
+-   
 
+-   
 
+## Executive Summary
 
-## student B will work here -
-
-
-
-## student C will work here -
+This report looks at 120 years of Olympic history – from the 1896 Athens Games to the 2016 Rio Games – to analyze participation and medal-winning trends. The analysis shows a major rise in the number of women athletes over time, and a continued dominance of wealthy countries in the medal tallies. Australia has a high Olympic performance relative to its population. The findings highlight the evolving inclusivity of the Olympics and the impact of national resources on sporting success.
