@@ -1,12 +1,43 @@
-.Rproj.user
+# Positron / R environment
+library/
+local/
+cellar/
+lock/
+python/
+sandbox/
+staging/
+assignment_3_files/
+
+# R
 .Rhistory
 .RData
 .Ruserdata
-renv/library/
-renv/local/
-renv/cellar/
-renv/lock/
-*.Rproj
-.DS_Store
-_site/
+
+# R project
+.Rproj.user/
+
+# Quarto
 .quarto/
+
+# Rendered output
+*_files/
+*.html
+
+# Cache
+_cache/
+cache/
+.knitr-cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Positron
+.positron/
