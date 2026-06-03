@@ -19,6 +19,7 @@ How have participation and medal-winning patterns changed across Olympic Games f
 #| message: false
 #| include: false
 library(tidyverse)
+library(broom)
 ```
 
 ```{r}
@@ -105,7 +106,9 @@ participation_model <- lm(Athletes ~ Year,
 ```
 
 ```{r}
-summary(participation_model)
+#| echo: false
+#| label: tbl-participation
+summary(participation_model) %>% glance()
 ```
 
 ```{r}
@@ -114,11 +117,12 @@ summary(participation_model)
 #| fig-subcap:
 #| - "Residuals vs Fitted"
 #| - "Normal Q-Q"
+#| echo: false
 plot(participation_model, which = 1)
 plot(participation_model, which = 2)
 ```
 
-Based on the linear regression results, the coefficient for Year is positive and statistically significant (p<0.001), indicating that Olympic participation has increased over time. However, the relatively low R-squared value suggests that Year alone explains only a limited proportion of the variation in participation. Additionally, the residual plots show clear patterns rather than random variation, indicating that the assumptions of linear regression may not be fully satisfied. Therefore, while there is evidence of a significant upward trend in participation, a more complex model may better capture the relationship over time.
+According to @tbl-participation, the coefficient for Year is positive and statistically significant (p<0.001), indicating that Olympic participation has increased over time. However, the relatively low R-squared value suggests that Year alone explains only a limited proportion of the variation in participation. Additionally, @fig-participation-residuals-1 and @fig-participation-residuals-2 show clear patterns rather than random variation, indicating that the assumptions of linear regression may not be fully satisfied. Therefore, while there is evidence of a significant upward trend in participation, a more complex model may better capture the relationship over time.
 
 2. Female Representation over time:
 ```{r}
@@ -149,6 +153,8 @@ female_model <- glm(
 
 
 ```{r}
+#| echo: false
+#| label: tbl-female-representation
 summary(female_model) 
 ```
 
@@ -158,11 +164,12 @@ summary(female_model)
 #| fig-subcap:
 #| - "Residuals vs Fitted"
 #| - "Normal Q-Q"
+#| echo: false
 plot(female_model, which = 1)
 plot(female_model, which = 2)
 ```
 
-The binomial logistic regression indicates that female representation in the Olympic Games has increased significantly over time. The coefficient for Year is positive and highly significant (p-value < 0.001) suggesting that the proportion of female athletes has steadily increased throughout the study period. The large reduction in deviance from the null model (20058.38) to the fitted model (503.82) indicates that Year explains a substantial amount of the variation in female participation rates. The residual plots look reasonably random, indicating a good fit for the model. Therefore, there is strong evidence that female representation in the Olympics has increased over time.
+The binomial logistic regression indicates that female representation in the Olympic Games has increased significantly over time. Based on @tbl-female-representation, the coefficient for Year is positive and highly significant (p-value < 0.001) suggesting that the proportion of female athletes has steadily increased throughout the study period . The large reduction in deviance from the null model (20058.38) to the fitted model (503.82) indicates that Year explains a substantial amount of the variation in female participation rates. The residual plots look reasonablyrandom, indicating a good fit for the model. Therefore, there is strong evidence that female representation in the Olympics has increased over time.
 
 3.
 ```{r}
@@ -193,7 +200,9 @@ female_medal_model <- glm(
 ```
 
 ```{r}
-summary(female_medal_model)
+#| echo: false
+#| label: tbl-female-medal-success
+summary(female_medal_model) 
 ```
 
 ```{r}
@@ -202,11 +211,12 @@ summary(female_medal_model)
 #| fig-subcap:
 #|  - "Residuals vs Fitted"
 #|  - "Normal Q-Q"
+#| echo: false
 plot(female_medal_model, which = 1)
 plot(female_medal_model, which = 2)
 ```
 
-The logistic regression shows a significant increase in female medal success over time (p-value < 0.001). The positive coefficient indicates that the proportion of medals won by female athletes has steadily increased throughout Olympic history. Furthermore, the substantial reduction in deviance from the null model (5548.17) to the fitted model (187.68) indicates that Year explains a considerable amount of the variation in female medal success rates. These results provide strong evidence that women's contribution to overall Olympic medal success has increased over time.
+The logistic regression shows a significant increase in female medal success over time (p-value < 0.001). @tbl-female-medal-success shows the positive coefficient indicating that the proportion of medals won by female athletes has steadily increased throughout Olympic history. Furthermore, the substantial reduction in deviance from the null model (5548.17) to the fitted model (187.68) indicates that Year explains a considerable amount of the variation in female medal success rates. These results provide strong evidence that women's contribution to overall Olympic medal success has increased over time.
 
 4. Medal Concentration Among Nations:
 ```{r}
@@ -233,7 +243,9 @@ hhi_model <- lm(HHI ~ Year,
 ```
 
 ```{r}
-summary(hhi_model)
+#| echo: false
+#| label: tbl-hhi
+summary(hhi_model) %>% glance()
 ```
 
 ```{r}
@@ -242,8 +254,9 @@ summary(hhi_model)
 #| fig-subcap: 
 #|   - "Residuals vs Fitted"
 #|   - "Normal Q-Q"
+#| echo: false
 plot(hhi_model, which = 1)
 plot(hhi_model, which = 2)
 ```
 
-The linear regression results indicate a significant decline in medal concentration over time. The coefficient for Year is negative and statistically significant with $\beta_1 = -0.00140$ and $p = 0.0017$, suggesting that Olympic medals have become less concentrated among a small number of countries and more evenly distributed across participating nations. The model explains approximately 26.2% of the variation in the HHI ($R^2 =0.262$), indicating that Year is a meaningful predictor of medal concentration, although other factors may also influence the distribution of medals. The residual plots satisfy the assumptions of linear regression, showing no clear patterns and suggesting a good fit for the model. Overall, these results provide strong evidence that medal concentration among nations has decreased over time, indicating a more competitive and inclusive Olympic Games.
+@tbl-hhi indicates a significant decline in medal concentration over time. The coefficient for Year is negative and statistically significant with $\beta_1 = -0.00140$ and $p = 0.0017$, suggesting that Olympic medals have become less concentrated among a small number of countries and more evenly distributed across participating nations. The model explains approximately 26.2% of the variation in the HHI ($R^2 =0.262$), indicating that Year is a meaningful predictor of medal concentration, although other factors may also influence the distribution of medals. The residual plots satisfy the assumptions of linear regression, showing no clear patterns and suggesting a good fit for the model. Overall, these results provide strong evidence that medal concentration among nations has decreased over time, indicating a more competitive and inclusive Olympic Games.
