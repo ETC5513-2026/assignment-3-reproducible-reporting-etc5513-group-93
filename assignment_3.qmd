@@ -38,6 +38,7 @@ library(broom)
 
 ```{r}
 #| label: load-data
+#| echo: false
 #| include: false
 data <- read_csv("data/athlete_events.csv")
 ```
@@ -102,7 +103,6 @@ To evaluate whether medal concentration among nations has changed over time, the
 $HHI_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
 where $HHI_{t}$ is the Herfindahl-Hirschman Index for each Year. A significant negative coefficient for Year ($\beta_1$) would suggest a decrease in medal concentration among nations over time, indicating a more even distribution of medals across countries.
 
-## Results
 
 1. Overall participation patterns over time: 
 ```{r}
@@ -165,15 +165,16 @@ female_model <- glm(
 )
 ```
 
-```{r}
 
+```{r}
+#| label: setup-athletes
+#| include: false
+#| message: false
 library(knitr)
 library(kableExtra)
-
-
 athletes <- read_csv("data/athlete_events.csv")
-
 ```
+
 
 
 
