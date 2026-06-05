@@ -1,29 +1,39 @@
 ---
-title: "assignment_3"
-format: html
-editor: visual
+title: "120 Years of Olympic History: Participation and Medal Trends"
+author:
+  - Vibhor Dabas
+  - Shravani Jadhav
+  - Minh Chung
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+bibliography: references.bib
 ---
 
+## Executive Summary
 
+This report looks at 120 years of Olympic history – from the 1896 Athens Games to the 2016 Rio Games – to analyze participation and medal-winning trends. The analysis shows a major rise in the number of women athletes over time, and a continued dominance of wealthy countries in the medal tallies. Australia has a high Olympic performance relative to its population. The findings highlight the evolving inclusivity of the Olympics and the impact of national resources on sporting success.
 
-## student A will work here -
+## Introduction -
 
-## student B will work here -
+The Olympic Games is the most popular international sports competition that gathers the best sportsmen from all the world every four years. Since their modern revival in Athens in 1896, the Games have expanded enormously in scale, diversity and global importance. Studying historical trends in Olympic participation and performance can shed light on wider trends in gender equality, national development and sporting investment. This report looks at athlete-level data over 120 years of Olympic history to bring out key trends in participation and medal outcomes.
+
+The dataset, from Kaggle [@olympics_kaggle], contains over 271,000 observations of athletes, sports, events, and medal results from Summer and Winter Games. The analysis is restricted to the Summer Olympics to ensure comparability of similar events. The analysis is guided by three key questions: How has gender participation changed over time? Which countries have historically dominated the medal tallies? How has Australia performed relative to other countries? The findings aim to provide a data-based view on the evolution of the Olympic movement.
+
 
 ```{r}
-#| label: setup
-#| include: false
-
-## student C will work here -
-
-#How have participation and medal-winning patterns changed across Olympic Games from 1896 to 2016, with a focus on gender representation and top-performing nations
-
-```{r} Load required package}
 #| label: get-data
 #| message: false
 #| include: false
+
 library(tidyverse)
 library(broom)
+
+
+#How have participation and medal-winning patterns changed across Olympic Games from 1896 to 2016, with a focus on gender representation and top-performing nations
+
 ```
 
 ```{r}
@@ -155,14 +165,17 @@ female_model <- glm(
 )
 ```
 
+```{r}
 
-library(tidyverse)
 library(knitr)
 library(kableExtra)
 
 
 athletes <- read_csv("data/athlete_events.csv")
+
 ```
+
+
 
 ## Methodology
 
@@ -223,7 +236,7 @@ athletes |>
   theme_minimal()
 ```
 
-## student C will work here -
+
 
 ```{r}
 #| echo: false
@@ -333,4 +346,8 @@ plot(hhi_model, which = 2)
 ```
 
 @tbl-hhi indicates a significant decline in medal concentration over time. The coefficient for Year is negative and statistically significant with $\beta_1 = -0.00140$ and $p = 0.0017$, suggesting that Olympic medals have become less concentrated among a small number of countries and more evenly distributed across participating nations. The model explains approximately 26.2% of the variation in the HHI ($R^2 =0.262$), indicating that Year is a meaningful predictor of medal concentration, although other factors may also influence the distribution of medals. The residual plots satisfy the assumptions of linear regression, showing no clear patterns and suggesting a good fit for the model. Overall, these results provide strong evidence that medal concentration among nations has decreased over time, indicating a more competitive and inclusive Olympic Games.
+
+
+
+
 
