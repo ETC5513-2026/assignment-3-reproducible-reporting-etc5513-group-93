@@ -10,19 +10,8 @@ format:
     number-sections: true
     colorlinks: true
 bibliography: references.bib
+
 ---
-
-## Executive Summary
-
-This report looks at 120 years of Olympic history – from the 1896 Athens Games to the 2016 Rio Games – to analyze participation and medal-winning trends. The analysis shows a major rise in the number of women athletes over time, and a continued dominance of wealthy countries in the medal tallies. Australia has a high Olympic performance relative to its population. The findings highlight the evolving inclusivity of the Olympics and the impact of national resources on sporting success.
-
-## Introduction -
-
-The Olympic Games is the most popular international sports competition that gathers the best sportsmen from all the world every four years. Since their modern revival in Athens in 1896, the Games have expanded enormously in scale, diversity and global importance. Studying historical trends in Olympic participation and performance can shed light on wider trends in gender equality, national development and sporting investment. This report looks at athlete-level data over 120 years of Olympic history to bring out key trends in participation and medal outcomes.
-
-The dataset, from Kaggle [@olympics_kaggle], contains over 271,000 observations of athletes, sports, events, and medal results from Summer and Winter Games. The analysis is restricted to the Summer Olympics to ensure comparability of similar events. The analysis is guided by three key questions: How has gender participation changed over time? Which countries have historically dominated the medal tallies? How has Australia performed relative to other countries? The findings aim to provide a data-based view on the evolution of the Olympic movement.
-
-
 ```{r}
 #| label: get-data
 #| message: false
@@ -30,22 +19,36 @@ The dataset, from Kaggle [@olympics_kaggle], contains over 271,000 observations 
 
 library(tidyverse)
 library(broom)
-
-
-#How have participation and medal-winning patterns changed across Olympic Games from 1896 to 2016, with a focus on gender representation and top-performing nations
-
-```
-
-```{r}
-#| label: load-data
-#| echo: false
-#| include: false
+library(knitr)
+library(kableExtra)
 data <- read_csv("data/athlete_events.csv")
+adj_data <- data %>% filter(Season == "Summer")
 ```
+
+## Executive Summary
+
+This report looks at 120 years of Olympic history – from the 1896 Athens Games to the 2016 Rio Games - to analyze participation and medal-winning trends. The analysis shows a major rise in the number of women athletes over time, and a continued dominance of wealthy countries in the medal tallies. Australia has a high Olympic performance relative to its population. The findings highlight the evolving inclusivity of the Olympics and the impact of national resources on sporting success.
+
+## Introduction
+
+The Olympic Games is the most popular international sports competition that gathers the best sportsmen from all the world every four years. Since their modern revival in Athens in 1896, the Games have expanded enormously in scale, diversity and global importance. Studying historical trends in Olympic participation and performance can shed light on wider trends in gender equality, national development and sporting investment. This report looks at athlete-level data over 120 years of Olympic history to bring out key trends in participation and medal outcomes.
+
+The dataset, from Kaggle [@olympics_kaggle], contains over 271,000 observations of athletes, sports, events, and medal results from Summer and Winter Games. The analysis is restricted to the Summer Olympics to ensure comparability of similar events. 
+
+By analysing both visual and statistical trends, this report aims to answer key questions about how have participation and medal-winning patterns changed across Olympic Games from 1896 to 2016, with a focus on gender representation and top-performing nations
+
+## Research Questions
+The analysis is guided by three key questions: 
+
+- How has overall athlete participation in the Summer Olympic Games changed over time?
+
+- How has female representation among Olympic athletes changed over time?
+
+- Has the proportion of Olympic medals won by female athletes increased over time?
+
+- Has the distribution of Olympic medals among nations become more or less concentrated over time?
 
 ## Methodology
-
-How have participation and medal-winning patterns changed across Olympic Games from 1896 to 2016, with a focus on gender representation and top-performing nations
 
 ### Data source:
 The dataset is sourced from Kaggle and acknowldeged as The Olympic data on www.sports-reference.com, which contains information on athletes, their participation in Olympic Games, and the medals they won from 1896 to 2016. The dataset includes variables:
@@ -70,8 +73,6 @@ The dataset is sourced from Kaggle and acknowldeged as The Olympic data on www.s
 
 - Year: Integer
 
-- Season: Summer or Winter
-
 - City: Host city
 
 - Sport: Sport
@@ -80,8 +81,11 @@ The dataset is sourced from Kaggle and acknowldeged as The Olympic data on www.s
 
 - Medal: Gold, Silver, Bronze, or NA
 
-### Implementation:
-To analyse how participation and medal-winning patterns have changed across the Olympic Games from 1896 to 2016, we examine four key aspects: overall participation, female representation, female medal success, and medal concentration among nations. Statistical models are used to assess whether these measures exhibit significant trends over time.
+### Visualisation:
+This data analysis makes use of the "120 Years of Olympic History" dataset found on Kaggle and has a total of 271,116 observations in 15 different variables that cover the period from the Athens Games in 1896 to the Rio Games in 2016 [@olympics_kaggle]. Data is related to individual athletes such as their names, sex, age, country, sport, event, and the medals won. Only the Summer Olympic Games were considered in order to ensure consistency in the types of events being compared since there are differences between the Summer and Winter Olympic Games in terms of sports, countries that participate, and numbers of athletes. The Age, Height and Weight variables had missing values which were not necessary for the analysis. Medal values of NA indicate non-medallists and were excluded from medal counts.
+
+### Statstical Analysis:
+Moreover, to analyse and infer how participation and medal-winning patterns have changed across the Olympic Games from 1896 to 2016, we examine four key aspects: overall participation, female representation, female medal success, and medal concentration among nations. Statistical models are used to assess whether these measures exhibit significant trends over time.
 
 1. Overall participation patterns over time: 
 To determine whether Olympic participation has increased over time, a linear regression model is fitted:
@@ -103,11 +107,67 @@ To evaluate whether medal concentration among nations has changed over time, the
 $HHI_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
 where $HHI_{t}$ is the Herfindahl-Hirschman Index for each Year. A significant negative coefficient for Year ($\beta_1$) would suggest a decrease in medal concentration among nations over time, indicating a more even distribution of medals across countries.
 
+## Results
+
+### Visulization
+
+```{r}
+#| label: fig-gender
+#| fig-cap: "Athlete Participation by Gender in the Summer Olympics (1896–2016)"
+#| echo: false
+#| warning: false
+
+adj_data |>
+  distinct(Year, Name, Sex) |>
+  count(Year, Sex) |>
+  ggplot(aes(x = Year, y = n, colour = Sex)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  labs(x = "Year", y = "Number of Athletes", colour = "Sex") +
+  theme_minimal()
+```
+
+```{r}
+#| label: tbl-medals
+#| tbl-cap: "Top 5 Countries by Total Medals (Summer Olympics)"
+#| echo: false
+#| warning: false
+
+adj_data |>
+  filter(!is.na(Medal)) |>
+  count(Team, name = "Total Medals") |>
+  arrange(desc(`Total Medals`)) |>
+  head(5) |>
+  rename(Country = Team) |>
+  kable(booktabs = TRUE)
+```
+
+```{r}
+#| label: fig-topcountries
+#| fig-cap: "Top 10 Countries by Total Medal Count in the Summer Olympics (1896–2016)"
+#| echo: false
+#| warning: false
+
+adj_data |>
+  filter(!is.na(Medal)) |>
+  count(Team, name = "total_medals") |>
+  arrange(desc(total_medals)) |>
+  head(10) |>
+  mutate(Team = fct_reorder(Team, total_medals)) |>
+  ggplot(aes(x = total_medals, y = Team)) +
+  geom_col(fill = "steelblue") +
+  labs(x = "Total Medals", y = "Country") +
+  theme_minimal()
+```
+
+@fig-topcountries shows the ten countries with the highest total number of medals won through all Summer Olympic Games. Leading is the United States, then comes the Soviet Union and Germany. Australia can be found among the ten most successful countries. There is a noticeable domination of rich countries throughout history, which proves the correlation between national resources and Olympic success.
+
+### Statistical Analysis
 
 1. Overall participation patterns over time: 
 ```{r}
 #| include: false
-participation <- data %>%
+participation <- adj_data %>%
   distinct(ID, Year, Season) %>%
   group_by(Year) %>%
   summarise(
@@ -132,16 +192,21 @@ summary(participation_model) %>% glance()
 #| - "Residuals vs Fitted"
 #| - "Normal Q-Q"
 #| echo: false
-plot(participation_model, which = 1)
-plot(participation_model, which = 2)
+par(mfrow = c(1,2), mar = c(4,4,1,1))
+
+plot(participation_model, which = 1, main = "")
+plot(participation_model, which = 2, main = "")
+
+par(mfrow = c(1,1))
 ```
 
-According to @tbl-participation, the coefficient for Year is positive and statistically significant (p<0.001), indicating that Olympic participation has increased over time. However, the relatively low R-squared value suggests that Year alone explains only a limited proportion of the variation in participation. Additionally, @fig-participation-residuals-1 and @fig-participation-residuals-2 show clear patterns rather than random variation, indicating that the assumptions of linear regression may not be fully satisfied. Therefore, while there is evidence of a significant upward trend in participation, a more complex model may better capture the relationship over time.
+According to @tbl-participation, the coefficient for Year is positive and statistically significant (p<0.001), indicating that Olympic participation has increased over time. However, the relatively low R-squared value suggests that Year alone explains only a limited proportion of the variation in participation. Additionally, the residuals plots show clear patterns rather than random variation, indicating that the assumptions of linear regression may not be fully satisfied. Therefore, while there is evidence of a significant upward trend in participation, a more complex model may better capture the relationship over time.
 
 2. Female Representation over time:
+
 ```{r}
 #| include: false
-gender_participation <- data %>%
+gender_participation <- adj_data %>%
   distinct(ID, Year, Sex) %>%
   group_by(Year, Sex) %>%
   summarise(
@@ -165,80 +230,6 @@ female_model <- glm(
 )
 ```
 
-
-```{r}
-#| label: setup-athletes
-#| include: false
-#| message: false
-library(knitr)
-library(kableExtra)
-athletes <- read_csv("data/athlete_events.csv")
-```
-
-
-
-
-## Methodology
-
-This data analysis makes use of the "120 Years of Olympic History" dataset found on Kaggle and has a total of 271,116 observations in 15 different variables that cover the period from the Athens Games in 1896 to the Rio Games in 2016 [@olympics_kaggle]. Data is related to individual athletes such as their names, sex, age, country, sport, event, and the medals won. Only the Summer Olympic Games were considered in order to ensure consistency in the types of events being compared since there are differences between the Summer and Winter Olympic Games in terms of sports, countries that participate, and numbers of athletes. The Age, Height and Weight variables had missing values which were not necessary for the analysis. Medal values of NA indicate non-medallists and were excluded from medal counts. @fig-gender shows participation trends by gender over time and @tbl-medals summarises medal counts by sport for the top 5 countries.
-
-```{r}
-#| label: fig-gender
-#| fig-cap: "Athlete Participation by Gender in the Summer Olympics (1896–2016)"
-#| echo: false
-#| warning: false
-
-athletes |>
-  filter(Season == "Summer") |>
-  distinct(Year, Name, Sex) |>
-  count(Year, Sex) |>
-  ggplot(aes(x = Year, y = n, colour = Sex)) +
-  geom_line(linewidth = 1) +
-  geom_point(size = 2) +
-  labs(x = "Year", y = "Number of Athletes", colour = "Sex") +
-  theme_minimal()
-
-```
-
-```{r}
-#| label: tbl-medals
-#| tbl-cap: "Top 5 Countries by Total Medals (Summer Olympics)"
-#| echo: false
-#| warning: false
-
-athletes |>
-  filter(Season == "Summer", !is.na(Medal)) |>
-  count(Team, name = "Total Medals") |>
-  arrange(desc(`Total Medals`)) |>
-  head(5) |>
-  rename(Country = Team) |>
-  kable(booktabs = TRUE)
-```
-
-## Results
-
-@fig-topcountries shows the ten countries with the highest total number of medals won through all Summer Olympic Games. Leading is the United States, then comes the Soviet Union and Germany. Australia can be found among the ten most successful countries. There is a noticeable domination of rich countries throughout history, which proves the correlation between national resources and Olympic success.
-
-```{r}
-#| label: fig-topcountries
-#| fig-cap: "Top 10 Countries by Total Medal Count in the Summer Olympics (1896–2016)"
-#| echo: false
-#| warning: false
-
-athletes |>
-  filter(Season == "Summer", !is.na(Medal)) |>
-  count(Team, name = "total_medals") |>
-  arrange(desc(total_medals)) |>
-  head(10) |>
-  mutate(Team = fct_reorder(Team, total_medals)) |>
-  ggplot(aes(x = total_medals, y = Team)) +
-  geom_col(fill = "steelblue") +
-  labs(x = "Total Medals", y = "Country") +
-  theme_minimal()
-```
-
-
-
 ```{r}
 #| echo: false
 #| label: tbl-female-representation
@@ -252,8 +243,12 @@ summary(female_model)
 #| - "Residuals vs Fitted"
 #| - "Normal Q-Q"
 #| echo: false
-plot(female_model, which = 1)
-plot(female_model, which = 2)
+par(mfrow = c(1,2), mar = c(4,4,1,1))
+
+plot(female_model, which = 1, main = "")
+plot(female_model, which = 2, main = "")
+
+par(mfrow = c(1,1))
 ```
 
 The binomial logistic regression indicates that female representation in the Olympic Games has increased significantly over time. Based on @tbl-female-representation, the coefficient for Year is positive and highly significant (p-value < 0.001) suggesting that the proportion of female athletes has steadily increased throughout the study period . The large reduction in deviance from the null model (20058.38) to the fitted model (503.82) indicates that Year explains a substantial amount of the variation in female participation rates. The residual plots look reasonablyrandom, indicating a good fit for the model. Therefore, there is strong evidence that female representation in the Olympics has increased over time.
@@ -261,7 +256,7 @@ The binomial logistic regression indicates that female representation in the Oly
 3.
 ```{r}
 #| include: false
-medals <- data %>%
+medals <- adj_data %>%
   filter(!is.na(Medal))
 gender_medals <- medals %>%
   group_by(Year, Sex) %>%
@@ -299,8 +294,12 @@ summary(female_medal_model)
 #|  - "Residuals vs Fitted"
 #|  - "Normal Q-Q"
 #| echo: false
-plot(female_medal_model, which = 1)
-plot(female_medal_model, which = 2)
+par(mfrow = c(1,2), mar = c(4,4,1,1))
+
+plot(female_medal_model, which = 1, main = "")
+plot(female_medal_model, which = 2, main = "")
+
+par(mfrow = c(1,1))
 ```
 
 The logistic regression shows a significant increase in female medal success over time (p-value < 0.001). @tbl-female-medal-success shows the positive coefficient indicating that the proportion of medals won by female athletes has steadily increased throughout Olympic history. Furthermore, the substantial reduction in deviance from the null model (5548.17) to the fitted model (187.68) indicates that Year explains a considerable amount of the variation in female medal success rates. These results provide strong evidence that women's contribution to overall Olympic medal success has increased over time.
@@ -342,13 +341,23 @@ summary(hhi_model) %>% glance()
 #|   - "Residuals vs Fitted"
 #|   - "Normal Q-Q"
 #| echo: false
-plot(hhi_model, which = 1)
-plot(hhi_model, which = 2)
+par(mfrow = c(1,2), mar = c(4,4,1,1))
+
+plot(hhi_model, which = 1, main = "")
+plot(hhi_model, which = 2, main = "")
+
+par(mfrow = c(1,1))
 ```
 
 @tbl-hhi indicates a significant decline in medal concentration over time. The coefficient for Year is negative and statistically significant with $\beta_1 = -0.00140$ and $p = 0.0017$, suggesting that Olympic medals have become less concentrated among a small number of countries and more evenly distributed across participating nations. The model explains approximately 26.2% of the variation in the HHI ($R^2 =0.262$), indicating that Year is a meaningful predictor of medal concentration, although other factors may also influence the distribution of medals. The residual plots satisfy the assumptions of linear regression, showing no clear patterns and suggesting a good fit for the model. Overall, these results provide strong evidence that medal concentration among nations has decreased over time, indicating a more competitive and inclusive Olympic Games.
 
+## Conclusion and Discussion
 
+The analysis of Summer Olympic Games data from 1896 to 2016 reveals substantial changes in participation and medal outcomes over time. Athlete participation increased significantly throughout the study period, reflecting the expansion of the Olympic movement and the growing global interest in international sport. Female representation also rose considerably, with women accounting for an increasingly larger share of participants and medal winners. These findings indicate that the Olympic Games have become progressively more inclusive and have provided greater opportunities for female athletes to compete and succeed at the highest level.
 
+The results also suggest that Olympic success has become less concentrated among a small group of nations. The decline in the Herfindahl–Hirschman Index over time indicates a more even distribution of medals across participating countries, pointing to increased competitiveness within the Games. While historically successful nations continue to achieve strong results, the broader distribution of medals suggests that more countries have been able to develop competitive sporting programs. Overall, the findings highlight the growth, inclusiveness, and increasing international competitiveness of the Summer Olympic Games over the past 120 years.
 
+## Limitations
+This study has several limitations. The analysis focuses on long-term trends using Year as the primary explanatory variable and does not account for other factors that may influence participation and medal outcomes, such as population size, economic development, government investment in sport, host-country effects, or geopolitical events. In addition, the statistical models assume relatively simple relationships between Year and the outcomes of interest, which may not fully capture periods of rapid change in Olympic participation and performance. The measure of medal concentration also describes how medals are distributed among nations but does not identify the underlying causes of those patterns. Future research could incorporate additional economic, demographic, and policy-related variables to provide a more comprehensive understanding of the factors shaping Olympic success.
 
+## References
