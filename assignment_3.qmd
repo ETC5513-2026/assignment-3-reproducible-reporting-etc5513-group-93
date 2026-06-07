@@ -11,6 +11,8 @@ format:
 bibliography: references.bib
 ---
 
+\newpage
+
 ```{r}
 #| label: get-data
 #| message: false
