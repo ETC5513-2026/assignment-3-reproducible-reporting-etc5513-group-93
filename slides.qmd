@@ -29,15 +29,6 @@ adj_data <- data %>% filter(Season == "Summer")
 adj_data_c <- data %>% filter(Season == "Summer") %>% mutate(Year = Year - min(Year))
 ```
 
-
-# Agenda
-
-1. Introduction
-2. Research Question
-2. Methodology
-3. Results
-4. Discussion / Conclusion
-
 # Introduction
 
 ## Olympic Games: 
@@ -52,12 +43,13 @@ adj_data_c <- data %>% filter(Season == "Summer") %>% mutate(Year = Year - min(Y
 --> Studying historical trends in Olympic participation and performance can shed light on wider trends in gender equality, national development and sporting investment.
 --> Provide a data-based view on the evolution of the Olympic movement
 
-# Dataset description
+# Dataset + Research Questions
+## Dataset:
 - Collected from Kaggle
 - 271,000 observations of athletes, events, medals, and attributes (Summer and Winter Olympics)
 - From 1896 to 2016 (120 years of Olympic history)
 
-# Research Question
+## Research Questions:
 
 - How has overall athlete participation in the Summer Olympic Games changed over time?
 
@@ -69,27 +61,22 @@ adj_data_c <- data %>% filter(Season == "Summer") %>% mutate(Year = Year - min(Y
 
 # Methodology
 
-- Visualisation of trends in participation and medals over time
+**Visualisation** of trends in participation and medals over time
 
-- Implentation of a simple linear regression model and logistic regression model to test specific hypotheses about the relationship
+**Implentation** of a simple linear regression model and logistic regression model to test specific hypotheses about the relationship
 
-# Implementation
 1. Overall participation patterns over time: 
 
 - $Participation_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
-where $Participation_{t}$ is the number of athletes participating in each Year
 
 2. Female Representation over time:
 - $\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
-where $p_{t}$ is the proportion of female athletes in each Year
 
 3. Female Medal Success over time:
 - $\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
-where $p_{t}$ is the proportion of medals won by female athletes in each Year
 
 4. Medal Concentration Among Nations:
 - $HHI_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
-where $HHI_{t}$ is the Herfindahl-Hirschman Index for each Year
 
 # Results
 ## Visualisation
@@ -149,9 +136,8 @@ adj_data |>
   kable(booktabs = TRUE)
 ```
 
-# Statistical Analysis
 
-## Overall participation patterns over time
+# Overall participation patterns over time
 ```{r}
 #| include: false
 participation <- adj_data_c %>%
@@ -183,11 +169,12 @@ participation_summary$`R²` <- c(
 kable(participation_summary, digits = 4)
 ```
 
-# Overall participation patterns over time: 
 ```{r}
 #| label: fig-participation-residuals
 #| fig-cap: "Residual plots for participation model"
 #| echo: false
+#| fig-width: 5
+#| fig-height: 2.5
 par(mfrow = c(1,2), mar = c(4,4,1,1))
 
 plot(participation_model, which = 1, main = "")
@@ -195,13 +182,6 @@ plot(participation_model, which = 2, main = "")
 
 par(mfrow = c(1,1))
 ```
-
-# Overall participation patterns over time
-## Interpretation:
-- The positive and significant Year coefficient (p < 0.001) indicates that athlete participation increased over time, and R² of 0.92 suggests that the model explains a large proportion of the variance in participation across years.
-
-## Model check:
-- The residual plots show noticeable patterns, suggesting that a simple linear trend may not fully capture changes in participation across Olympic history.
 
 # Female Representation over time
 ```{r}
@@ -247,11 +227,12 @@ female_summary$`Pseudo R²` <- c(
 kable(female_summary, digits = 4)
 ```
 
-# Female Representation over time
 ```{r}
 #| label: fig-female-representation-residuals
 #| fig-cap: "Residual plots for female representation model"
 #| echo: false
+#| fig-width: 5
+#| fig-height: 2.5
 par(mfrow = c(1,2), mar = c(4,4,1,1))
 
 plot(female_model, which = 1, main = "")
@@ -259,13 +240,6 @@ plot(female_model, which = 2, main = "")
 
 par(mfrow = c(1,1))
 ```
-
-# Female Representation over time
-## Interpretation:
-- The positive and highly significant Year coefficient (p < 0.001) provides strong evidence that the proportion of female athletes increased steadily throughout the study period. The Pseudo R² of 0.97 indicates that the model explains a very large proportion.
-
-## Model check:
-- The residual diagnostics show non-linear patterns, suggesting that the model captures the overall trend but may not fully account for all fluctuations in female representation over time.
 
 # Female Medal Success over time
 ```{r}
@@ -314,11 +288,12 @@ female_medal_summary$`Pseudo R²` <- c(
 kable(female_medal_summary, digits = 4)
 ```
 
-# Female Medal Success over time
 ```{r}
 #| label: fig-female-medal-residuals
 #| fig-cap: "Residual plots for female medal success model"
 #| echo: false
+#| fig-width: 5
+#| fig-height: 2.5
 par(mfrow = c(1,2), mar = c(4,4,1,1))
 
 plot(female_medal_model, which = 1, main = "")
@@ -326,13 +301,6 @@ plot(female_medal_model, which = 2, main = "")
 
 par(mfrow = c(1,1))
 ```
-
-# Female Medal Success over time
-## Interpretation:
-- The positive and significant Year coefficient (p < 0.001) indicates that female athletes accounted for an increasing share of Olympic medals over time. The Pseudo R² of 0.96 suggests that the model explains a very large proportion
-
-## Model check:
-- The residual plots suggest that the model does not capture the overall trend well, indicating that there may be other factors influencing female medal success over time that are not accounted for in this simple model.
 
 # Medal Concentration Among Nations
 ```{r}
@@ -376,7 +344,6 @@ hhi_summary$`R²` <- c(
 kable(hhi_summary, digits = 4)
 ```
 
-# Medal Concentration Among Nations
 ```{r}
 #| label: fig-hhi-residuals
 #| fig-cap: "Residual plots for HHI model"
@@ -391,28 +358,15 @@ plot(hhi_model, which = 2, main = "")
 par(mfrow = c(1,1))
 ```
 
-# Medal Concentration Among Nations
-## Interpretation:
-- The negative and significant Year coefficient (p < 0.01) indicates that medals have become less concentrated among a small number of countries over time.
-
-## Model check:
-- The residual diagnostics support the assumptions of linear regression not too poorly, although there is some indication of non-linearity in the residuals, suggesting that the decline in medal concentration may not be perfectly linear over time.
-
 # Conclusion and Recommendation
-- Athlete participation in the Summer Olympics has increased significantly over the past 120 years
+- Athlete participation in the Summer Olympics has increased significantly over the past 120 years 
 
 - Female representation among Olympic athletes has increased dramatically, and the proportion of medals won by female athletes has also increased significantly over time
 
 - The distribution of Olympic medals across nations has become less concentrated over time
 
-# Conclusion and Recommendation
+**Limitation:** Not account for other factors and the linear and logistic regression models not fully capture non-linear changes
 
-## Limitation
-- Does not account for other factors and the linear and logistic regression models may not fully capture non-linear changes
-
-## Future research
-- Explore more complex models that incorporate additional predictors and non-linear effects
-
-- Conduct qualitative analyses to understand the social and political factors driving changes in Olympic participation and success
+**Future research:** : Explore more complex models and conduct qualitative analyses to understand the social and political factors driving changes in Olympic participation and success
 
 
