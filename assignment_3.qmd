@@ -43,15 +43,11 @@ The analysis is guided by three key questions:
 
 - How has overall athlete participation in the Summer Olympic Games changed over time?
 
-- How has female representation among Olympic athletes changed over time?
-
 - Has the proportion of Olympic medals won by female athletes increased over time?
 
 - Has the distribution of Olympic medals among nations become more or less concentrated over time?
 
-## Methodology
-
-### Data source:
+## Data source:
 The dataset is sourced from Kaggle and acknowldeged as The Olympic data on www.sports-reference.com, which contains information on athletes, their participation in Olympic Games, and the medals they won from 1896 to 2016. The dataset includes variables:
 
 - ID: Unique number for each athlete
@@ -82,28 +78,25 @@ The dataset is sourced from Kaggle and acknowldeged as The Olympic data on www.s
 
 - Medal: Gold, Silver, Bronze, or NA
 
+## Methodology
+
 ### Visualisation:
-This data analysis makes use of the "120 Years of Olympic History" dataset found on Kaggle and has a total of 271,116 observations in 15 different variables that cover the period from the Athens Games in 1896 to the Rio Games in 2016 [@olympics_kaggle]. Data is related to individual athletes such as their names, sex, age, country, sport, event, and the medals won. Only the Summer Olympic Games were considered in order to ensure consistency in the types of events being compared since there are differences between the Summer and Winter Olympic Games in terms of sports, countries that participate, and numbers of athletes. The Age, Height and Weight variables had missing values which were not necessary for the analysis. Medal values of NA indicate non-medallists and were excluded from medal counts.
+The analysis begins with visual exploration of the data to identify key trends in participation and medal outcomes. Line plots and table are used to describe the trend and highlight the top-performing countries in terms of total medals won. 
 
 ### Statstical Analysis:
-Moreover, to analyse and infer how participation and medal-winning patterns have changed across the Olympic Games from 1896 to 2016, we examine four key aspects: overall participation, female representation, female medal success, and medal concentration among nations. Statistical models are used to assess whether these measures exhibit significant trends over time.
+The following statistical models are fitted to answer the research questions:
 
 1. Overall participation patterns over time: 
 To determine whether Olympic participation has increased over time, a linear regression model is fitted:
 $Participation_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
 where $Participation_{t}$ is the number of athletes participating in each Year. A significant positive coefficient for Year ($\beta_1$) would indicate an increase in participation over time.
 
-2. Female Representation over time:
-To assess whether female representation has changed over time, the proportion of female athletes is analysed using a binomial logistic regression model:
-$\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
-where $p_{t}$ is the proportion of female athletes in each Year. The model is fitted using the yearly counts of female and male athletes. A significantly positive estimate of $\beta_1$ would suggest an increasing trend in female representation over time
-
-3. Female Medal Success over time:
+2. Female Medal Success over time:
 To investigate whether female athletes have become more successful over time, the proportion of medals won by women is analysed using a binomial logistic regression model:
 $\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
 where $p_{t}$ is the proportion of medals won by female athletes in each Year. The model is fitted using the yearly counts of medals won by female and male athletes. A significantly positive estimate of $\beta_1$ would indicate an increasing trend in female medal success over time.
 
-4. Medal Concentration Among Nations:
+3. Medal Concentration Among Nations:
 To evaluate whether medal concentration among nations has changed over time, the Herfindahl-Hirschman Index (HHI) is calculated for each Year based on the distribution of medals among countries. A linear regression model is then fitted:
 $HHI_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
 where $HHI_{t}$ is the Herfindahl-Hirschman Index for each Year. A significant negative coefficient for Year ($\beta_1$) would suggest a decrease in medal concentration among nations over time, indicating a more even distribution of medals across countries.
@@ -212,82 +205,9 @@ plot(participation_model, which = 2, main = "")
 par(mfrow = c(1,1))
 ```
 
-According to @tbl-participation, the coefficient for Year is positive and statistically significant (p<0.001), indicating that Olympic participation has increased over time. The high R-squared value (0.924) suggests that Year explains a large proportion of the variation in athlete participation across Olympic Games. However, the residuals plots show clear patterns rather than random variation indicating that the assumptions of linear regression may not be fully satisfied. This suggests that while there is evidence of a significant upward trend in participation, a more complex model may better capture the relationship over time, such as including polynomial terms or using a non-linear model to account for periods of rapid growth in participation.
+According to @tbl-participation, the coefficient for Year is positive and statistically significant (p<0.001), indicating that Olympic participation has increased over time, around 88 more athletes per year on average. The R-squared value (0.924) also supports that Year explains a large proportion of the variation in athlete participation across Olympic Games. 
 
-2. Female Representation over time:
-
-```{r}
-#| include: false
-gender_participation <- adj_data_c %>%
-  distinct(ID, Year, Sex) %>%
-  group_by(Year, Sex) %>%
-  summarise(
-    Athletes = n(),
-    .groups = "drop"
-  ) %>%
-  tidyr::pivot_wider(
-    names_from = Sex,
-    values_from = Athletes,
-    values_fill = 0
-  ) %>%
-  rename(
-    Female = F,
-    Male = M
-  )
-
-female_model <- glm(
-  cbind(Female, Male) ~ Year,
-  family = binomial,
-  data = gender_participation
-)
-```
-
-```{r}
-#| echo: false
-#| label: tbl-female-representation
-
-female_summary <- tibble(
-  Term = c("Intercept", "Year"),
-  Coefficient = coef(female_model),
-  `p-value` = summary(female_model)$coefficients[, "Pr(>|z|)"]
-)
-
-female_summary$`Pseudo R²` <- c(
-  1 - female_model$deviance / female_model$null.deviance,
-  ""
-)
-
-female_summary$`Null Deviance` <- c(
-  female_model$null.deviance,
-  ""
-)
-
-female_summary$`Residual Deviance` <- c(
-  female_model$deviance,
-  ""
-)
-
-kable(female_summary, digits = 4)
-```
-
-```{r}
-#| label: fig-female-representation-residuals
-#| fig-cap: "Residual plots for female representation model"
-#| fig-subcap:
-#| - "Residuals vs Fitted"
-#| - "Normal Q-Q"
-#| echo: false
-par(mfrow = c(1,2), mar = c(4,4,1,1))
-
-plot(female_model, which = 1, main = "")
-plot(female_model, which = 2, main = "")
-
-par(mfrow = c(1,1))
-```
-
-The binomial logistic regression indicates that female representation in the Olympic Games has increased slightly over time. Based on @tbl-female-representation, the coefficient for Year is positive (0.032) and highly significant (p-value < 0.001) suggesting that the proportion of female athletes has increased throughout the study period. The large reduction in deviance from the null model (20058.38) to the fitted model (503.82) indicates that Year explains a substantial amount of the variation in female participation rates. The residual plots do not look reasonably random, indicating that the model may not fully capture the relationship between Year and female representation.
-
-3.
+2. Female Medal Success over time:
 ```{r}
 #| include: false
 medals <- adj_data_c %>%
@@ -357,9 +277,9 @@ plot(female_medal_model, which = 2, main = "")
 par(mfrow = c(1,1))
 ```
 
-The logistic regression shows an increase in female medal success over time (p-value < 0.001 and $\beta_1 = 0.03$). @tbl-female-medal-success shows the positive coefficient indicating that the proportion of medals won by female athletes has slightly increased throughout Olympic history. Furthermore, the substantial reduction in deviance from the null model (5109.44) to the fitted model (181.18) indicates that Year explains a considerable amount of the variation in female medal success rates. These results provide strong evidence that women's contribution to overall Olympic medal success has increased over time. But the residual plots do not look reasonably random which are the same as the previous two resutls, indicating that the model may not fully capture the relationship.
+@tbl-female-medal-success shows the positive coefficient indicating that the proportion of medals won by female athletes has slightly increased throughout Olympic history, around 3% per year on average. The p-value for Year is statistically significant (p<0.001) and the Psuedo R-squared value (0.964) highly supports that Year explains a large proportion of the variation.
 
-4. Medal Concentration Among Nations:
+3. Medal Concentration Among Nations:
 ```{r}
 #| include: false
 country_medals <- medals %>%
@@ -415,11 +335,13 @@ plot(hhi_model, which = 2, main = "")
 par(mfrow = c(1,1))
 ```
 
-@tbl-hhi indicates a decline in medal concentration over time. The coefficient for Year is negative and statistically significant with $\beta_1 = -0.0016$ and $p = 0.0035$, suggesting that Olympic medals have become less concentrated among a small number of countries and more evenly distributed across participating nations. The model explains approximately 27.4% of the variation in the HHI ($R^2 =0.274$), indicating that Year is a meaningful predictor of medal concentration, although other factors may also influence the distribution of medals. The residual plots look reasonably random, indicating that the model fits the data well and that the assumptions of linear regression are likely satisfied. This suggests that the observed decline in medal concentration over time is a robust finding, providing evidence of increased competitiveness and diversity in Olympic medal outcomes across nations.
+@tbl-hhi indicates a stastically significant decline in medal concentration over time, with a negative coefficient for Year, around 0.16% decrease in HHI per year on average (p-value < 0.005). The R-squared value (0.274) suggests that Year explains a moderate proportion of the variation in HHI across Olympic Games. 
+
+@fig-participation-residuals and @fig-female-medal-residuals indicate that the residuals are not reasonably random, which suggests that the linear and logistic regression models may not fully capture the relationship. However, @fig-hhi-residuals look better, suggest that the linear regression model for HHI works reasonably well.
 
 ## Conclusion and Discussion
 
-The analysis of Summer Olympic Games data from 1896 to 2016 reveals clear and statistically significant changes in participation and medal outcomes over time. Overall athlete participation has increased substantially, reflecting the long-term expansion of the Olympic Games and its growing global reach. Female representation has also increased steadily, with both participation and medal success showing strong upward trends over time. These results provide consistent evidence that the Olympics have become more inclusive, particularly in terms of gender representation.
+The analysis of Summer Olympic Games data from 1896 to 2016 reveals clear and statistically significant changes in participation and medal outcomes over time. Overall athlete participation has increased substantially, reflecting the long-term expansion of the Olympic Games and its growing global reach. Female success has also increased steadily, showing an upward trends over time. These results provide consistent evidence that the Olympics have become more inclusive, particularly in terms of gender representation.
 
 In addition, the distribution of Olympic medals across nations has become less concentrated over time. The declining Herfindahl–Hirschman Index suggests that medals are no longer dominated by a small group of countries to the same extent as in earlier Olympic Games. This indicates increasing competitiveness and a broader international spread of sporting success, although traditional sporting powers still remain highly successful.
 
