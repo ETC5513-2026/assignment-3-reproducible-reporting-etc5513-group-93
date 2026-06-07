@@ -126,15 +126,16 @@ adj_data |>
 
 ### Statistical Analysis:
 
-Moreover, to analyse and infer how participation and medal-winning patterns have changed across the Olympic Games from 1896 to 2016, we examine four key aspects: overall participation, female representation, female medal success, and medal concentration among nations. Statistical models are used to assess whether these measures exhibit significant trends over time.
+Moreover, to analyse and infer how participation and medal-winning patterns have changed across the Olympic Games from 1896 to 2016, we examine four key aspects: overall participation, female medal success, and medal concentration among nations. Statistical models are used to assess whether these measures exhibit significant trends over time.
 
-1.  Overall participation patterns over time: To determine whether Olympic participation has increased over time, a linear regression model is fitted: $Participation_{t}$ \~ $\beta_0$ + $\beta_1$ \* Year + $\epsilon_t$ where $Participation_{t}$ is the number of athletes participating in each Year. A significant positive coefficient for Year ($\beta_1$) would indicate an increase in participation over time.
+1.  Overall participation patterns over time: A linear regression model is fitted
+$Participation_{t}$ \~ $\beta_0$ + $\beta_1$ \* Year + $\epsilon_t$ where $Participation_{t}$ is the number of athletes participating in each Year. 
 
-2.  Female Representation over time: To assess whether female representation has changed over time, the proportion of female athletes is analysed using a binomial logistic regression model: $\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ \~ $\beta_0$ + $\beta_1$ \* Year + $\epsilon_t$ where $p_{t}$ is the proportion of female athletes in each Year. The model is fitted using the yearly counts of female and male athletes. A significantly positive estimate of $\beta_1$ would suggest an increasing trend in female representation over time
+2.  Female Medal Success over time: A binomial logistic regression model: 
+$\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ \~ $\beta_0$ + $\beta_1$ \* Year + $\epsilon_t$ where $p_{t}$ is the proportion of medals won by female athletes in each Year. 
 
-3.  Female Medal Success over time: To investigate whether female athletes have become more successful over time, the proportion of medals won by women is analysed using a binomial logistic regression model: $\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ \~ $\beta_0$ + $\beta_1$ \* Year + $\epsilon_t$ where $p_{t}$ is the proportion of medals won by female athletes in each Year. The model is fitted using the yearly counts of medals won by female and male athletes. A significantly positive estimate of $\beta_1$ would indicate an increasing trend in female medal success over time.
-
-4.  Medal Concentration Among Nations: To evaluate whether medal concentration among nations has changed over time, the Herfindahl-Hirschman Index (HHI) is calculated for each Year based on the distribution of medals among countries. A linear regression model is then fitted: $HHI_{t}$ \~ $\beta_0$ + $\beta_1$ \* Year + $\epsilon_t$ where $HHI_{t}$ is the Herfindahl-Hirschman Index for each Year. A significant negative coefficient for Year ($\beta_1$) would suggest a decrease in medal concentration among nations over time, indicating a more even distribution of medals across countries.
+3.  Medal Concentration Among Nations: The Herfindahl-Hirschman Index (HHI) is calculated for each Year based on the distribution of medals among countries. And a linear regression model is then fitted: 
+$HHI_{t}$ \~ $\beta_0$ + $\beta_1$ \* Year + $\epsilon_t$ where $HHI_{t}$ is the Herfindahl-Hirschman Index for each Year. 
 
 ## Results
 
@@ -213,80 +214,7 @@ par(mfrow = c(1,1))
 
 According to @tbl-participation, the coefficient for Year is positive and statistically significant (p\<0.001), indicating that Olympic participation has increased over time. The high R-squared value (0.924) suggests that Year explains a large proportion of the variation in athlete participation across Olympic Games.
 
-2.  Female Representation over time:
-
-```{r}
-#| include: false
-gender_participation <- adj_data_c %>%
-  distinct(ID, Year, Sex) %>%
-  group_by(Year, Sex) %>%
-  summarise(
-    Athletes = n(),
-    .groups = "drop"
-  ) %>%
-  tidyr::pivot_wider(
-    names_from = Sex,
-    values_from = Athletes,
-    values_fill = 0
-  ) %>%
-  rename(
-    Female = F,
-    Male = M
-  )
-
-female_model <- glm(
-  cbind(Female, Male) ~ Year,
-  family = binomial,
-  data = gender_participation
-)
-```
-
-```{r}
-#| echo: false
-#| label: tbl-female-representation
-
-female_summary <- tibble(
-  Term = c("Intercept", "Year"),
-  Coefficient = coef(female_model),
-  `p-value` = summary(female_model)$coefficients[, "Pr(>|z|)"]
-)
-
-female_summary$`Pseudo R²` <- c(
-  1 - female_model$deviance / female_model$null.deviance,
-  ""
-)
-
-female_summary$`Null Deviance` <- c(
-  female_model$null.deviance,
-  ""
-)
-
-female_summary$`Residual Deviance` <- c(
-  female_model$deviance,
-  ""
-)
-
-kable(female_summary, digits = 4)
-```
-
-```{r}
-#| label: fig-female-representation-residuals
-#| fig-cap: "Residual plots for female representation model"
-#| fig-subcap:
-#| - "Residuals vs Fitted"
-#| - "Normal Q-Q"
-#| echo: false
-par(mfrow = c(1,2), mar = c(4,4,1,1))
-
-plot(female_model, which = 1, main = "")
-plot(female_model, which = 2, main = "")
-
-par(mfrow = c(1,1))
-```
-
-The binomial logistic regression indicates that female representation in the Olympic Games has increased slightly over time. Based on @tbl-female-representation, the coefficient for Year is positive (0.032) and highly significant (p-value \< 0.001) suggesting that the proportion of female athletes has increased throughout the study period.
-
-3.  Female Medal Success over time:
+2.  Female Medal Success over time:
 
 ```{r}
 #| include: false
@@ -359,7 +287,7 @@ par(mfrow = c(1,1))
 
 @tbl-female-medal-success shows the positive coefficient indicating that the proportion of medals won by female athletes has slightly increased throughout Olympic history, around 3% per year on average. The p-value for Year is statistically significant (p\<0.001) and the Psuedo R-squared value (0.964) highly supports that Year explains a large proportion of the variation.
 
-4.  Medal Concentration Among Nations:
+3.  Medal Concentration Among Nations:
 
 ```{r}
 #| include: false
