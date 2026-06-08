@@ -3,8 +3,7 @@ title: "120 Years of Olympic History: Participation and Medal Trends"
 author: ["Vibhor Dabas", "Shravani Jadhav", "Minh Ngo"]
 date: today
 format:
-  revealjs:
-    theme: default
+  beamer: default
 ---
 
 ```{r}
@@ -58,14 +57,20 @@ Data of athletes, events, medals, and attributes (Summer and Winter Olympics), c
 
 **Implentation** of a simple linear regression model, logistic regression model and HHI to test specific hypotheses about the relationship
 
-------------------------------------------------------------------------
+1. Overall participation patterns over time:
+- $Participation_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
+
+2. Female Medal Success over time:
+- $\log\left(\frac{p_{t}}{1 - p_{t}} \right)$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
+
+3. Medal Concentration Among Nations:
+- $HHI_{t}$ ~ $\beta_0$ + $\beta_1$ * Year + $\epsilon_t$
 
 ## Results
-
 ### Visualisation
 
-::::: columns
-::: column
+::: columns
+:::: column
 ```{r}
 #| label: fig-gender
 #| fig-cap: "Athlete Participation by Gender in the Summer Olympics (1896–2016)"
@@ -104,9 +109,7 @@ adj_data |>
 :::
 :::::
 
-------------------------------------------------------------------------
-
-### Visualisation
+## Visualisation
 
 ```{r}
 #| label: tbl-medals
@@ -121,8 +124,6 @@ adj_data |>
   rename(Country = Team) |>
   kable(booktabs = TRUE)
 ```
-
-------------------------------------------------------------------------
 
 ## Overall participation patterns over time
 
@@ -171,66 +172,7 @@ plot(participation_model, which = 2, main = "")
 par(mfrow = c(1,1))
 ```
 
-## Female Representation over time
-
-```{r}
-#| include: false
-gender_participation <- adj_data_c %>%
-  distinct(ID, Year, Sex) %>%
-  group_by(Year, Sex) %>%
-  summarise(
-    Athletes = n(),
-    .groups = "drop"
-  ) %>%
-  tidyr::pivot_wider(
-    names_from = Sex,
-    values_from = Athletes,
-    values_fill = 0
-  ) %>%
-  rename(
-    Female = F,
-    Male = M
-  )
-
-female_model <- glm(
-  cbind(Female, Male) ~ Year,
-  family = binomial,
-  data = gender_participation
-)
-```
-
-```{r}
-#| echo: false
-#| label: tbl-female-representation
-female_summary <- tibble(
-  Term = c("Intercept", "Year"),
-  Coefficient = coef(female_model),
-  `p-value` = summary(female_model)$coefficients[, "Pr(>|z|)"]
-)
-
-female_summary$`Pseudo R²` <- c(
-  1 - female_model$deviance / female_model$null.deviance,
-  ""
-)
-
-kable(female_summary, digits = 4)
-```
-
-```{r}
-#| label: fig-female-representation-residuals
-#| fig-cap: "Residual plots for female representation model"
-#| echo: false
-#| fig-width: 5
-#| fig-height: 2.5
-par(mfrow = c(1,2), mar = c(4,4,1,1))
-
-plot(female_model, which = 1, main = "")
-plot(female_model, which = 2, main = "")
-
-par(mfrow = c(1,1))
-```
-
-# Female Medal Success over time
+## Female Medal Success over time
 
 ```{r}
 #| include: false
@@ -292,7 +234,7 @@ plot(female_medal_model, which = 2, main = "")
 par(mfrow = c(1,1))
 ```
 
-# Medal Concentration Among Nations
+## Medal Concentration Among Nations
 
 ```{r}
 #| include: false
@@ -349,11 +291,9 @@ plot(hhi_model, which = 2, main = "")
 par(mfrow = c(1,1))
 ```
 
-# Conclusion and Recommendation
+## Conclusion and Recommendation
 
--   Athlete participation in the Summer Olympics has increased significantly over the past 120 years
-
--   Female representation among Olympic athletes has increased dramatically, and the proportion of medals won by female athletes has also increased significantly over time
+- Female representation among Olympic athletes has increased (visualisation), and the proportion of medals won by female athletes has also increased significantly over time
 
 -   The distribution of Olympic medals across nations has become less concentrated over time
 
